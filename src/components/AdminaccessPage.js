@@ -42,6 +42,7 @@ const AdminaccessPage = () => {
     products: []
   })
   if(!email){
+    //alert("")
     const localemail = localStorage.getItem('email');
     setEmail(localemail)
   }
