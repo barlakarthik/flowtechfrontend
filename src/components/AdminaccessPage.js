@@ -42,7 +42,6 @@ const AdminaccessPage = () => {
     products: []
   })
   if(!email){
-    //alert("")
     const localemail = localStorage.getItem('email');
     setEmail(localemail)
   }
@@ -111,6 +110,7 @@ const AdminaccessPage = () => {
       contact: apiData?.mobile,
       territory: apiData?.address,
       enqRefNum: apiData?._id,
+      enqSource:apiData?.email,
       sector: enqObj?.sector,
       enqOwner: enqObj?.enqOwner,
       // groceries: enqObj.groceries,
@@ -284,6 +284,10 @@ const AdminaccessPage = () => {
               <label class="form-label">Enquiry Reference Number</label>
               <input type="text" class="form-control" placeholder="enqRefNum..." value={apiData?._id} />
             </div>
+            <div class="mb-3">
+              <label class="form-label">Enquiry Source</label>
+              <input type="text" class="form-control" placeholder="enqRefNum..." value={apiData?.email} />
+            </div>
             <div className='mb-3'>
               <label class="form-label">Sector</label>
               <select class="form-select" name='sector' value={enqObj?.sector?.value} onChange={onChnagehHandler}>
@@ -373,6 +377,7 @@ const AdminaccessPage = () => {
               <th scope="col">Contact</th>
               <th scope="col">Territory</th>
               <th scope='col'>Enquiry Id</th>
+              <th scope='col'>Enquiry Ref Id</th>
               <th scope='col'>Sector</th>
               <th scope='col'>Enquiry Owner</th>
               <th scope='col'>Products</th>
@@ -388,9 +393,10 @@ const AdminaccessPage = () => {
                 <td>{item.contact}</td>
                 <td>{item.territory}</td>
                 <td>{item.enqRefNum}</td>
+                <td>{item.enqSource}</td>
                 <td>{item.sector}</td>
                 <td>{item.enqOwner}</td>
-                <td>{item.products ? "true" : "false"}</td>
+                <td>{item.products?.length>=1 ? "true" : "false"}</td>
                 <td>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <FontAwesomeIcon icon={faTrashAlt} className="fa-lg d-block pointer text-danger" />
@@ -412,7 +418,7 @@ const AdminaccessPage = () => {
               <th scope="col">Account Name</th>
               <th scope="col">Contact</th>
               <th scope="col">Territory</th>
-              <th scope='col'>Enquiry Id</th>
+              <th scope='col'>Enquiry Ref Id</th>
               <th scope='col'>Sector</th>
               <th scope='col'>Enquiry Owner</th>
               <th scope='col'>Products</th>
