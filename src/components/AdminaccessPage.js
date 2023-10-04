@@ -41,7 +41,7 @@ const AdminaccessPage = () => {
     },
     products: []
   })
-  if(!email){
+  if (!email) {
     const localemail = localStorage.getItem('email');
     setEmail(localemail)
   }
@@ -110,7 +110,7 @@ const AdminaccessPage = () => {
       contact: apiData?.mobile,
       territory: apiData?.address,
       enqRefNum: apiData?._id,
-      enqSource:apiData?.email,
+      enqSource: apiData?.email,
       sector: enqObj?.sector,
       enqOwner: enqObj?.enqOwner,
       // groceries: enqObj.groceries,
@@ -376,8 +376,8 @@ const AdminaccessPage = () => {
               <th scope="col">Account Name</th>
               <th scope="col">Contact</th>
               <th scope="col">Territory</th>
-              <th scope='col'>Enquiry Id</th>
               <th scope='col'>Enquiry Ref Id</th>
+              <th scope='col'>Enquiry Source</th>
               <th scope='col'>Sector</th>
               <th scope='col'>Enquiry Owner</th>
               <th scope='col'>Products</th>
@@ -396,7 +396,7 @@ const AdminaccessPage = () => {
                 <td>{item.enqSource}</td>
                 <td>{item.sector}</td>
                 <td>{item.enqOwner}</td>
-                <td>{item.products?.length>=1 ? "true" : "false"}</td>
+                <td>{item.products?.length >= 1 ? "true" : "false"}</td>
                 <td>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <FontAwesomeIcon icon={faTrashAlt} className="fa-lg d-block pointer text-danger" />
@@ -419,6 +419,7 @@ const AdminaccessPage = () => {
               <th scope="col">Contact</th>
               <th scope="col">Territory</th>
               <th scope='col'>Enquiry Ref Id</th>
+              <th scope='col'>Enquiry Source</th>
               <th scope='col'>Sector</th>
               <th scope='col'>Enquiry Owner</th>
               <th scope='col'>Products</th>
