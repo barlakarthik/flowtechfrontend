@@ -24,15 +24,27 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
     const [email] = useContext(store);
     const [{ isLoading, apiData, serverError }] = useFetch(`/email/${email}`);
 
-
     useEffect(() => {
         if (selectedRowData && selectedRowData.length > 0) {
             setEnquiryOwner({ label: selectedRowData[0].enqOwner });
             setSector({ label: selectedRowData[0].sector });
         }
-    }, [selectedRowData]);
-
-
+        if (isEdit) {
+            alert("edit");
+            setEnquiryOwner({ label: editRowData[0].enqOwner });
+            setSector({ label: editRowData[0].sector });
+            const formattedProducts = editRowData[0].products.map((product, index) => ({
+                value: product.itemName,
+                label: product.itemName,
+                price: product.price,
+                quantity: product.quantity,
+                totalPrice: product.price * product.quantity,
+                sNo: index + 1,
+            }));
+            setSNo(editRowData[0].products.length)
+            setSelectedItems(formattedProducts);
+        }
+    }, []);
 
     const handleItemSelect = (selected) => {
         const selectedItem = selectedItems.find((item) => item.value === selected.value);
@@ -55,7 +67,7 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
                 {
                     ...selected,
                     quantity: 1,
-                    sNo: sNo,
+                    sNo: sNo + 1,
                     totalPrice: selected.price,
                 },
             ]);
@@ -142,7 +154,7 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
             enqOwner: enquiryOwner.label,
             products: selectedProducts,
         }
-        axios.put(`http://localhost:8080/api/enquiry/${editRowData._id}`, updateData)
+        axios.put(`http://localhost:8080/api/enquiry/${editRowData[0]._id}`, updateData)
             .then((response) => {
                 console.log(response);
                 toast.success('Enquiry updated successfully');
