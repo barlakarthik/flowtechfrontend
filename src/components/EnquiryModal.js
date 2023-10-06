@@ -309,7 +309,7 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
                                                     <th>Item</th>
                                                     <th>Quantity</th>
                                                     <th>Price</th>
-                                                    <th>Action</th>
+                                                    {!viewMode && <th>Action</th>}
                                                 </tr>
                                             </thead>
                                             {viewMode ? (
@@ -322,13 +322,13 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
                                                                     <td>{product.itemName}</td>
                                                                     <td>{product.quantity}</td>
                                                                     <td>{product.price}</td>
-                                                                    <td>
+                                                                    {!viewMode && <td>
                                                                         <i
                                                                             className="fa fa-trash mx-2 col-1"
                                                                             style={{ cursor: "pointer", color: "red" }}
                                                                             onClick={() => handleRemoveItem(item)}
                                                                         ></i>
-                                                                    </td>
+                                                                    </td>}
                                                                 </tr>
                                                             ))}
                                                         </React.Fragment>
