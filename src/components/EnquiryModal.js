@@ -197,11 +197,11 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
             .post('http://localhost:8080/api/enquiry', formData)
             .then((response) => {
                 toast.success('Enquiry submitted successfully');
-                // window.location.reload()
             })
             .catch((error) => {
                 console.error('Error submitting enquiry:', error);
                 if (error.response) {
+                    toast.error('Enquiry failed to submit');
                     console.log('Response Data:', error.response.data);
                 }
             });

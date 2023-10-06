@@ -64,6 +64,10 @@ const AdminaccessPage = () => {
     const filteredUsers = allData.filter((item) => (item.email !== apiData.email))
     setUsers(filteredUsers)
   }
+  const LogoutHandler = ()=>{
+    setShowUsers(!showUsers);
+    localStorage.clear()
+  }
 
   const openEnquiryModal = () => {
     setViewMode(false)
@@ -210,7 +214,7 @@ const AdminaccessPage = () => {
           </div>
           <div>
             <Link to={"/register"}>
-              <button className="logoutbtn" onClick={() => setShowUsers(!showUsers)}>Logout</button>
+              <button className="logoutbtn" onClick={LogoutHandler/*() => setShowUsers(!showUsers)*/}>Logout</button>
             </Link>
           </div>
         </>

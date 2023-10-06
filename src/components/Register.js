@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import toast, { Toaster } from 'react-hot-toast';
@@ -11,11 +11,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAllUsers, registerUser } from '../helper/helper';
 const Register = () => {
   const [file, setFile] = useState();
+  const [token, setToken] = useState("");
   const navigate = useNavigate();
   const [typesOfroles, setTypesOfRoles] = useState([
-    {value:"customer", label:"Customer"},
-    {value:"reviewer", label:"Reviewer"},
-    {value:"approver", label:"Approver"}
+    { value: "customer", label: "Customer" },
+    { value: "reviewer", label: "Reviewer" },
+    { value: "approver", label: "Approver" }
   ])
   const formik = useFormik({
     initialValues: {
@@ -51,6 +52,12 @@ const Register = () => {
       }
     }
   })
+  useEffect(() => {
+    const localToken = localStorage.getItem("token");
+    if(!localToken){
+      toast.success("Successfully logout")
+    }
+  }, [])
   const upload = async (e) => {
     const base64 = await convertToBase64(e.target.files[0]);
     setFile(base64)
@@ -142,7 +149,7 @@ const Register = () => {
                 />
                 <select {...formik.getFieldProps('role')} className="form-control">
                   <option>Select a role...</option>
-                  {typesOfroles.map((item)=>(
+                  {typesOfroles.map((item) => (
                     <option value={item.value}>{item.label}</option>
                   ))}
                 </select>
