@@ -11,7 +11,6 @@ import avatar from '../Assets/user.jpg'
 const Email = () => {
   const [email, setEmail] = useContext(store);
   const navigate = useNavigate()
-  // const setEmail = useAuthStore(state=>state.setEmail)
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -21,10 +20,10 @@ const Email = () => {
     validateOnChange: false,
     onSubmit: async values => {
       setEmail(values.email)
+      localStorage.setItem("email",values.email)
       navigate('/password')
     }
   })
-  localStorage.setItem("email", email);
   return (
     <>
       <Toaster position="top-center" reverseOrder></Toaster>

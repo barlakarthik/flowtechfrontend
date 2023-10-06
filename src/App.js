@@ -1,5 +1,5 @@
-import React,{createContext, useState} from 'react';
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import React, { createContext, useState, useEffect } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Email from './components/Email';
 import Password from './components/Password';
 import Register from './components/Register';
@@ -49,13 +49,21 @@ const router = createBrowserRouter([
   }
 ])
 function App() {
-  const [email,setEmail] = useState(null);
+
+  const [email, setEmail] = useState(null);
+
+  useEffect(() => {
+    setEmail(localStorage.getItem("Email"))
+  }, [])
+
   return (
+
     <main>
-      <store.Provider value={[email,setEmail]}>
-      <RouterProvider router={router}></RouterProvider>
+      <store.Provider value={[email, setEmail]}>
+        <RouterProvider router={router}></RouterProvider>
       </store.Provider>
     </main>
+
   );
 }
 
