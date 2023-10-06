@@ -8,6 +8,7 @@ import Recovery from './components/Recovery';
 import Reset from './components/Reset';
 import PageNotFound from './components/PageNotFound';
 import AdminaccessPage from './components/AdminaccessPage';
+import Reviewer from './components/Reviewer'
 export const store = createContext()
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path:'/register',
     element:<Register/>
+  },
+  {
+    path:'/reviewer',
+    element:<Reviewer/>
   },
   {
     path:'/password',
