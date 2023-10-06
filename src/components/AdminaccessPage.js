@@ -162,6 +162,7 @@ const AdminaccessPage = () => {
       <nav className='nav' style={{ backgroundColor: "rgb(48, 117, 184)" }}>
         <>
           <div>
+            <Link to="/profile">
             <img
               src={apiData?.profile}
               style={{
@@ -172,6 +173,7 @@ const AdminaccessPage = () => {
               }}
               alt="Profile"
             />
+            </Link>
           </div>
           <div>
             <li className="nav-item">
