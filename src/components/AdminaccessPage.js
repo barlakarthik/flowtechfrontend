@@ -64,6 +64,10 @@ const AdminaccessPage = () => {
     const filteredUsers = allData.filter((item) => (item.email !== apiData.email))
     setUsers(filteredUsers)
   }
+  const LogoutHandler = ()=>{
+    setShowUsers(!showUsers);
+    localStorage.clear()
+  }
 
   const openEnquiryModal = () => {
     setViewMode(false)
@@ -162,6 +166,7 @@ const AdminaccessPage = () => {
       <nav className='nav' style={{ backgroundColor: "rgb(48, 117, 184)" }}>
         <>
           <div>
+            <Link to="/profile">
             <img
               src={apiData?.profile}
               style={{
@@ -172,6 +177,7 @@ const AdminaccessPage = () => {
               }}
               alt="Profile"
             />
+            </Link>
           </div>
           <div>
             <li className="nav-item">
@@ -208,7 +214,7 @@ const AdminaccessPage = () => {
           </div>
           <div>
             <Link to={"/register"}>
-              <button className="logoutbtn" onClick={() => setShowUsers(!showUsers)}>Logout</button>
+              <button className="logoutbtn" onClick={LogoutHandler/*() => setShowUsers(!showUsers)*/}>Logout</button>
             </Link>
           </div>
         </>
