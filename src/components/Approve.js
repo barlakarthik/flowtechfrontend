@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, json } from "react-router-dom";
 import useFetch from "../hook/fetch.hook";
+import toast, { Toaster } from 'react-hot-toast';
 import { store } from "../App";
 import axios from 'axios';
 const Approve = () => {
@@ -18,10 +19,15 @@ const Approve = () => {
     const sendEmail = async(e)=>{
       e.preventDefault();
       const res = await axios.post('http://localhost:8080/api/sentmail',{body:JSON.stringify({testEmail})});
-      console.log(res);
+      if(res.data.info && res.data.status === 201){
+        toast.success("mail send successfully")
+      }else{
+        toast.error("unable send mail")
+      }
     }
     return (
         <div>
+            <Toaster position="top-center" reverseOrder></Toaster>
             <nav className='nav' style={{ backgroundColor: "rgb(48, 117, 184)" }}>
                 <>
                     <div>
