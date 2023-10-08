@@ -25,16 +25,18 @@ const Password = () => {
     onSubmit: async (values) => {
       let loginPromise = await verifyPassword({
         email,
-        password: values?.password, 
+        password: values?.password,
       });
       const allData = await getAllUsers()
-      const logeduser = allData.find((item)=>(item.username === loginPromise.username))
+      const logeduser = allData.find((item) => (item.username === loginPromise.username))
       if (loginPromise) {
         localStorage.setItem("token", loginPromise.token);
         toast.success(<b>Signin Successful...</b>);
-        if(logeduser.role === "customer"){
+        if (logeduser.role === "customer") {
           navigate("/admin")
-        }else{
+        } else if (logeduser.role === "approver") {
+          navigate("/approver");
+        } else {
           navigate("/profile");
         }
       } else {

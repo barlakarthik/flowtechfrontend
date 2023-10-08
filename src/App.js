@@ -8,6 +8,7 @@ import Recovery from './components/Recovery';
 import Reset from './components/Reset';
 import PageNotFound from './components/PageNotFound';
 import AdminaccessPage from './components/AdminaccessPage';
+import Approve from './components/Approve';
 
 export const store = createContext()
 
@@ -16,6 +17,10 @@ const router = createBrowserRouter(
     {
       path: '/',
       element: <Email />
+    },
+    {
+      path:"/approver",
+      element:<Approve/>
     },
     {
       path: '/register',
