@@ -53,7 +53,8 @@ const AdminaccessPage = () => {
     setShowEnq(!showEnq)
     setShowUsers(false)
     axios.get('http://localhost:8080/api/enquiries').then((res) => {
-      setEnquiries(res.data)
+      const filteredEnquiries = res.data.filter((enquiry) => enquiry.enqRefNum === apiData?._id);
+      setEnquiries(filteredEnquiries);
     })
   }
 
@@ -64,7 +65,7 @@ const AdminaccessPage = () => {
     const filteredUsers = allData.filter((item) => (item.email !== apiData.email))
     setUsers(filteredUsers)
   }
-  const LogoutHandler = ()=>{
+  const LogoutHandler = () => {
     setShowUsers(!showUsers);
     localStorage.clear()
   }
@@ -167,16 +168,16 @@ const AdminaccessPage = () => {
         <>
           <div>
             <Link to="/profile">
-            <img
-              src={apiData?.profile}
-              style={{
-                width: "70px",
-                height: "70px",
-                borderRadius: "50px",
-                cursor: "pointer",
-              }}
-              alt="Profile"
-            />
+              <img
+                src={apiData?.profile}
+                style={{
+                  width: "70px",
+                  height: "70px",
+                  borderRadius: "50px",
+                  cursor: "pointer",
+                }}
+                alt="Profile"
+              />
             </Link>
           </div>
           <div>
@@ -241,11 +242,11 @@ const AdminaccessPage = () => {
 
                 return (
                   <tr key={item._id}>
-                    <td scope="col" style={{ textAlign: 'center' }}>{index + 1}</td>
-                    <td scope="col" style={{ textAlign: 'center' }}>{item.accountname}</td>
-                    <td scope="col" style={{ textAlign: 'center' }}>{totalItems}</td>
-                    <td scope="col" style={{ textAlign: 'center' }}>{totalQuantity}</td>
-                    <td scope="col" style={{ textAlign: 'center' }}>{totalPrice}</td>
+                    <td className="col" style={{ textAlign: 'center' }}>{index + 1}</td>
+                    <td className="col" style={{ textAlign: 'center' }}>{item.accountname}</td>
+                    <td className="col" style={{ textAlign: 'center' }}>{totalItems}</td>
+                    <td className="col" style={{ textAlign: 'center' }}>{totalQuantity}</td>
+                    <td className="col" style={{ textAlign: 'center' }}>{totalPrice}</td>
                     <td className="col-1" style={{ textAlign: 'center' }}>
                       <i
                         id='View'
@@ -266,7 +267,7 @@ const AdminaccessPage = () => {
                         onClick={() => handleDeleteClick(item._id)}
                       ></i>
                     </td>
-                    <td scope="col" style={{ textAlign: 'center' }}>
+                    <td className="col" style={{ textAlign: 'center' }}>
                       <input
                         type="checkbox"
                         checked={exportRow[index]}

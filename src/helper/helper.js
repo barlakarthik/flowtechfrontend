@@ -12,7 +12,6 @@ const authenticate = async (email) => {
 const getUser = async ({ email }) => {
   try {
     const { data } = await axios.get(`/api/email/${email}`);
-    console.log(data, "useruser")
     return data 
   } catch (error) {
     return { error: "password does'not match" };
