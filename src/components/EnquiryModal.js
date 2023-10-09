@@ -9,7 +9,6 @@ import 'react-tabs/style/react-tabs.css';
 import axios from 'axios';
 
 const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
-    console.log(editRowData, "editRowData");
     const [activeTab, setActiveTab] = useState(0);
     const [productActiveTab, setProductActiveTab] = useState(0);
     const [data, setData] = useState([]);
@@ -30,7 +29,6 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
             setSector({ label: selectedRowData[0].sector });
         }
         if (isEdit) {
-            alert("edit");
             setEnquiryOwner({ label: editRowData[0].enqOwner });
             setSector({ label: editRowData[0].sector });
             const formattedProducts = editRowData[0].products.map((product, index) => ({
@@ -155,8 +153,7 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
             products: selectedProducts,
         }
         axios.put(`http://localhost:8080/api/enquiry/${editRowData[0]._id}`, updateData)
-            .then((response) => {
-                console.log(response);
+            .then(() => {
                 toast.success('Enquiry updated successfully');
                 // window.location.reload()
             })
@@ -195,7 +192,7 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
 
         axios
             .post('http://localhost:8080/api/enquiry', formData)
-            .then((response) => {
+            .then(() => {
                 toast.success('Enquiry submitted successfully');
             })
             .catch((error) => {
@@ -348,7 +345,6 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
                                                 </tbody>
                                             ) : (
                                                 <tbody>
-                                                    {console.log(selectedItems, "selectedItems Last")}
                                                     {selectedItems.map((item) => (
                                                         <tr key={item.value}>
                                                             <td>{item.sNo}</td>

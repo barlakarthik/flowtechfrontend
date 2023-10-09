@@ -16,7 +16,6 @@ export default function useFetch(query){
            setData((prev)=>({...prev, isLoading:true}));
            const {email} = !query? await getUser():"";
            const {data, status} = !query?await axios.get(`/api/email/${email}`): await axios.get(`/api/${query}`)
-           console.log(data, "useruser")
            if(status === 201){
             setData((prev)=>({...prev, isLoading:false}))
             setData((prev)=>({...prev, apiData:data, status:status}))  
