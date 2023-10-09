@@ -54,7 +54,7 @@ const Register = () => {
   })
   useEffect(() => {
     const localToken = localStorage.getItem("token");
-    if(!localToken){
+    if (!localToken) {
       toast.success("Successfully logout")
     }
   }, [])
