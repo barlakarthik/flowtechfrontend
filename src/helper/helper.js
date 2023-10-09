@@ -22,7 +22,6 @@ const getUser = async ({ email }) => {
 const getAllUsers = async () => {
   try {
     const { data } = await axios.get(`/api/getusers`);
-    console.log(data)
     return data 
   } catch (error) {
     return { error: "password does'not match" };

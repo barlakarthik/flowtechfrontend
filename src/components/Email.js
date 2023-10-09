@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik';
 import { Toaster } from 'react-hot-toast';
+import {getUser} from '../helper/helper';
 import { profileValidation } from '../helper/Validate';
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +11,7 @@ import { store } from '../App'
 import avatar from '../Assets/user.jpg'
 const Email = () => {
   const [email, setEmail] = useContext(store);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -20,7 +21,8 @@ const Email = () => {
     validateOnChange: false,
     onSubmit: async values => {
       setEmail(values.email)
-      localStorage.setItem("email",values.email)
+      localStorage.setItem("email",values.email);
+      localStorage.setItem("profile", values?.profile);
       navigate('/password')
     }
   })

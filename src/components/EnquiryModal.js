@@ -30,7 +30,6 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
             setSector({ label: selectedRowData[0].sector });
         }
         if (isEdit) {
-            alert("edit");
             setEnquiryOwner({ label: editRowData[0].enqOwner });
             setSector({ label: editRowData[0].sector });
             const formattedProducts = editRowData[0].products.map((product, index) => ({
