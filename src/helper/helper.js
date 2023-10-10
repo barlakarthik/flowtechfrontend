@@ -60,7 +60,6 @@ const verifyPassword = async ({ email, password }) => {
   try {
     if (email) {
       const { data } = await axios.post("/api/login", { email, password });
-      console.log(data, 'token')
       return Promise.resolve(data)
     }
   } catch (error) {
@@ -69,7 +68,6 @@ const verifyPassword = async ({ email, password }) => {
 };
 //update user
 const updateUser = async (response) => {
-  console.log(response)
   try {
     const token = localStorage.getItem("token");
     const {config} = await axios.put(`/api/updateuser`,response, {

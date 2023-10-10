@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import toast, { Toaster } from 'react-hot-toast';
@@ -27,7 +27,6 @@ const AdminaccessPage = () => {
     setEmail(localemail)
   }
   const [{ isLoading, apiData, serverError }] = useFetch(`/email/${email}`);
-
   const formik = useFormik({
     initialValues: {
       role: apiData?.role,
@@ -44,7 +43,9 @@ const AdminaccessPage = () => {
       }
     },
   });
-
+useEffect(()=>{
+  toast.success(<b>Signin Successful...</b>);
+}, [])
   const loadEnquiries = () => {
     setShowEnq(!showEnq)
     setShowUsers(false)

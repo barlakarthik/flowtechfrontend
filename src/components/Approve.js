@@ -31,20 +31,20 @@ const Approve = () => {
     const [{ isLoading, apiData, serverError }] = useFetch(`/email/${email}`);
     const formik = useFormik({
         initialValues: {
-          role: apiData?.role,
+            role: apiData?.role,
         },
         enableReinitialize: true,
         validateOnBlur: false,
         validateOnChange: false,
         onSubmit: async (values) => {
-          let updatePromise = await updateUser(values);
-          if (updatePromise) {
-            toast.success(<b>role updated successfully...!</b>);
-          } else {
-            toast.error(<b>failed to update role...!</b>);
-          }
+            let updatePromise = await updateUser(values);
+            if (updatePromise) {
+                toast.success(<b>role updated successfully...!</b>);
+            } else {
+                toast.error(<b>failed to update role...!</b>);
+            }
         },
-      });
+    });
     const LogoutHandler = () => {
         // setShowUsers(!showUsers);
         localStorage.clear()
@@ -197,7 +197,7 @@ const Approve = () => {
                                     </div>
                                 </div>
                                 <div className="col">
-                                    <button type="submit" className="btn btn-primary" onClick={() => sendEmail(item.enqSource)}>Send</button>
+                                    <button type="submit" className="btn btn-primary" onClick={(e) => sendEmail(e, item.enqSource)}>Send</button>
                                 </div>
                             </form>
                         </div>

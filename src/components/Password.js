@@ -15,7 +15,7 @@ const Password = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useContext(store);
   const localemail = localStorage.getItem('email');
-  const [{ isLoading, apiData, serverError }] = useFetch(`/email/${email}`);
+  const [{ isLoading, apiData, serverError }] = useFetch(`/email/${localemail}`);
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -32,7 +32,6 @@ const Password = () => {
       const logeduser = allData.find((item) => (item.username === loginPromise.username))
       if (loginPromise) {
         localStorage.setItem("token", loginPromise.token);
-        toast.success(<b>Signin Successful...</b>);
         if (logeduser.role === "customer") {
           navigate("/admin")
         } else if (logeduser.role === "approver") {
@@ -67,7 +66,7 @@ const Password = () => {
           </Link>
           <h3 style={{ textAlign: "center" }}>Login-Form</h3>
           <h4 style={{ textAlign: "center" }}>
-            Hello <span style={{ color: "blue" }}>{localemail ?localemail :apiData?.username}</span>
+            Hello <span style={{ color: "blue" }}>{apiData?.username}</span>
           </h4>
           <img
             className="mx-auto"

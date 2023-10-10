@@ -160,7 +160,7 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
             .catch((error) => {
                 console.error('Error updatting enquiry:', error);
                 if (error.response) {
-                    console.log('Response Data:', error.response.data);
+                    toast.error('Enquiry updated failed');
                 }
             });
 
@@ -199,7 +199,6 @@ const EnquiryModal = ({ selectedRowData, viewMode, isEdit, editRowData }) => {
                 console.error('Error submitting enquiry:', error);
                 if (error.response) {
                     toast.error('Enquiry failed to submit');
-                    console.log('Response Data:', error.response.data);
                 }
             });
         setSelectedItems([])
