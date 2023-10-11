@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import toast, { Toaster } from "react-hot-toast";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
+import { faChampagneGlasses, faLock } from "@fortawesome/free-solid-svg-icons";
 import { passwordValidate } from "../helper/Validate";
 import avatar from "../Assets/user.jpg";
 import { faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
@@ -34,7 +34,12 @@ const Password = () => {
         localStorage.setItem("token", loginPromise.token);
         if (logeduser.role === "customer") {
           navigate("/admin")
-        } else if (logeduser.role === "approver") {
+        }
+        else if(logeduser.role === "reviewer"){
+          console.log(logeduser.role, "logeduser.role")
+          navigate("/reviewer")
+        }
+         else if (logeduser.role === "approver") {
           navigate("/approver");
         } else {
           navigate("/profile");

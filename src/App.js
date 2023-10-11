@@ -8,51 +8,46 @@ import Recovery from './components/Recovery';
 import Reset from './components/Reset';
 import PageNotFound from './components/PageNotFound';
 import AdminaccessPage from './components/AdminaccessPage';
-import Approve from './components/Approve';
-
+import Reviewer from './components/Reviewer'
 export const store = createContext()
-
-const router = createBrowserRouter(
-  [
-    {
-      path: '/',
-      element: <Email />
-    },
-    {
-      path:"/approver",
-      element:<Approve/>
-    },
-    {
-      path: '/register',
-      element: <Register />
-    },
-    {
-      path: '/password',
-      element: <Password />
-    },
-    {
-      path: '/admin',
-      element: <AdminaccessPage />
-    },
-    {
-      path: '/profile',
-      element: <Profile />
-    },
-    {
-      path: '*',
-      element: <PageNotFound />
-    },
-    {
-      path: '/recovery',
-      element: <Recovery />
-    },
-    {
-      path: '/reset',
-      element: <Reset />
-    }
-  ]
-)
-
+const router = createBrowserRouter([
+  {
+    path:'/',
+    element:<Email/>
+  },
+  {
+    path:'/register',
+    element:<Register/>
+  },
+  {
+    path:'/reviewer',
+    element:<Reviewer/>
+  },
+  {
+    path:'/password',
+    element:<Password/>
+  },
+  {
+    path:'/admin',
+    element:<AdminaccessPage/>
+  },
+  {
+    path:'/profile',
+    element:<Profile/>
+  },
+  {
+    path:'*',
+    element:<PageNotFound/>
+  },
+  {
+    path:'/recovery',
+    element:<Recovery/>
+  },
+  {
+    path:'/reset',
+    element:<Reset/>
+  }
+])
 function App() {
 
   const [email, setEmail] = useState(null);
