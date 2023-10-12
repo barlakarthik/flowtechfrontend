@@ -14,7 +14,8 @@ import { store } from "../App";
 const Password = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useContext(store);
-  const [{ isLoading, apiData, serverError }] = useFetch(`/email/${email}`);
+  const localemail = localStorage.getItem('email');
+  const [{ isLoading, apiData, serverError }] = useFetch(`/email/${localemail}`);
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -31,7 +32,6 @@ const Password = () => {
       const logeduser = allData.find((item) => (item.username === loginPromise.username))
       if (loginPromise) {
         localStorage.setItem("token", loginPromise.token);
-        toast.success(<b>Signin Successful...</b>);
         if (logeduser.role === "customer") {
           navigate("/admin")
         }
