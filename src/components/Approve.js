@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, json } from "react-router-dom";
 import { useFormik } from "formik";
 import { Modal } from 'react-bootstrap';
@@ -7,23 +7,23 @@ import { getAllUsers } from "../helper/helper";
 import { deleteUser } from '../helper/helper';
 import { updateUser } from "../helper/helper";
 import toast, { Toaster } from 'react-hot-toast';
+import { faEye, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { store } from "../App";
 import axios from 'axios';
 const Approve = () => {
     const [email, setEmail] = useContext(store);
-    // const [testEmail, setTestEmail] = useState("");
     const [approved, setApproved] = useState([]);
     const [users, setUsers] = useState([]);
     const [show, setShow] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [showProducts, setShowProducts] = useState(false);
     const [showModal, setShowModal] = useState(false)
     const [showUsers, setShowUsers] = useState(false)
-    const filter = {
-        where: {
-            approve: true
-        }
-    };
-    const filterString = JSON.stringify(filter);
-    const encodedFilter = encodeURIComponent(filterString)
+    const [blur, setBlur] = useState("");
+    const [disabledIcon, setDisableIcon] = useState({});
+    const [toggleCard, setToggleCard] = useState(false);
+    const [customerProducts, setCustomerProducts] = useState([])
     if (!email) {
         const localemail = localStorage.getItem('email');
         setEmail(localemail)
@@ -56,6 +56,12 @@ const Approve = () => {
         const filteredUsers = allData.filter((item) => (item.email !== apiData.email))
         setUsers(filteredUsers)
     }
+    const getProducts = async () => {
+        const productsData = await axios.get("http://localhost:8080/api/products");
+        setProducts(productsData.data)
+        setShowProducts(true);
+        setShowUsers(false);
+    }
     const DeleteHandler = async (id) => {
         if (id) {
             toast.success(<b>Account deleted Successfully...</b>)
@@ -66,20 +72,36 @@ const Approve = () => {
         }
     }
     const AssignRole = (user) => {
-        setShowModal(!showModal)
+        setShowModal(!showModal);
     }
     const handleCloseModal = () => {
-        setShowModal(!showModal)
+        setShowModal(false);
+        setToggleCard(false);
+        setShowProducts(false);
     }
-    const sendEmail = async (e, testEmail) => {
+    const sendmail = async (e, testEmail) => {
         e.preventDefault();
         const res = await axios.post('http://localhost:8080/api/sentmail', { body: JSON.stringify({ testEmail }) });
         if (res.data.info && res.data.status === 201) {
-            toast.success("mail send successfully")
+            toast.success("mail send successfully");
+            setDisableIcon(prev => ({
+                ...prev, [testEmail]: true
+            }))
+            setBlur(testEmail)
         } else {
-            toast.error("unable send mail")
+            toast.error("unable send mail");
+            setDisableIcon(prev => ({
+                ...prev, [testEmail]: false
+            }))
         }
     }
+    const CustomerProducts = (e, item) => {
+        e.preventDefault()
+        setToggleCard(!toggleCard);
+        setCustomerProducts(item.products);
+    }
+    useEffect(() => {
+    }, [disabledIcon])
     const getApprovedEnquiries = async () => {
         setShowUsers(false);
         const approvedEnq = await axios(`http://localhost:8080/api/enquiries`);
@@ -111,6 +133,17 @@ const Approve = () => {
                             <a
                                 className="nav-link text-light"
                                 style={{ textDecoration: "none", cursor: "pointer" }}
+                            // onClick={() => usersData()}
+                            >
+                                AddProducts
+                            </a>
+                        </li>
+                    </div>
+                    <div>
+                        <li className="nav-item">
+                            <a
+                                className="nav-link text-light"
+                                style={{ textDecoration: "none", cursor: "pointer" }}
                                 onClick={getApprovedEnquiries}
                             >
                                 EnquiriesApproved<span style={{ backgroundColor: "red", color: "white", padding: "3px", borderRadius: "50px" }}>{approved.length}</span>
@@ -125,6 +158,17 @@ const Approve = () => {
                                 onClick={() => usersData()}
                             >
                                 Users
+                            </a>
+                        </li>
+                    </div>
+                    <div>
+                        <li className="nav-item">
+                            <a
+                                className="nav-link text-light"
+                                style={{ textDecoration: "none", cursor: "pointer" }}
+                                onClick={getProducts}
+                            >
+                                Products<span style={{ backgroundColor: "yellow", color: "red", padding: "3px", borderRadius: "50px" }}>{products.length}</span>
                             </a>
                         </li>
                     </div>
@@ -194,11 +238,12 @@ const Approve = () => {
                             <form className='col-lg-6 row'>
                                 <div className="col">
                                     <div className="mb-3">
-                                        <input type="email" className="form-control" name='testEmail' value={item.enqSource} /*onChange={(e) => setTestEmail(e.target.value)}*/ />
+                                        <input type="email" className="form-control" name='testEmail' disabled={blur === item.enqSource} value={item.enqSource} /*onChange={(e) => setTestEmail(e.target.value)}*/ />
                                     </div>
                                 </div>
                                 <div className="col">
-                                    <button type="submit" className="btn btn-primary" onClick={(e) => sendEmail(e, item.enqSource)}>Send</button>
+                                    <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "30px", cursor: "pointer" }} disabled={disabledIcon[item.enqSource] === true} onClick={(e) => sendmail(e, item.enqSource)} />{" "}
+                                    <FontAwesomeIcon icon={faEye} style={{ color: "dodgerblue", fontSize: "30px", cursor: "pointer" }} onClick={(e) => CustomerProducts(e, item)} />
                                 </div>
                             </form>
                         </div>
@@ -206,6 +251,58 @@ const Approve = () => {
                     </div>
                 )
             })}
+            <Modal show={showProducts} onHide={handleCloseModal} size='xl'>
+                <Modal.Header closeButton>
+                    <Modal.Title>Products</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='row'>
+                        {products && products.length >= 1 && products.map((item) => {
+                            return (
+                                <div className='col-3'>
+                                    <div className='card'>
+                                        <div className='card-body'>
+                                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                {item.name}
+                                                <img src={item.imageUrl} alt='pic'
+                                                    style={{
+                                                        width: "50px",
+                                                        height: "50px",
+                                                        borderRadius: "50px",
+                                                    }}
+                                                />
+                                                {item.category === "groceries"&&<span style={{ color: "green" }}><b>{item.category}</b></span>||item.category === "deo"&&<span style={{ color: "red" }}><b>{item.category}</b></span>||item.category === "mobiles"&&<span style={{ color: "blue" }}><b>{item.category}</b></span>||item.category === "footwear"&&<span style={{ color: "black" }}><b>{item.category}</b></span>||item.category === "electronics"&&<span style={{ color: "yellow" }}><b>{item.category}</b></span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </Modal.Body>
+            </Modal>
+            <Modal show={toggleCard} onHide={handleCloseModal} size='lg'>
+                <Modal.Header closeButton>
+                    <Modal.Title>Customer Orders</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='row'>
+                        {customerProducts && customerProducts.length >= 1 && customerProducts.map(((item, index) => {
+                            return (
+                                <div className='col-3'>
+                                    <div className='card'>
+                                        <div className='card-body'>
+                                            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                {item.itemName}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }))}
+                    </div>
+                </Modal.Body>
+            </Modal>
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Update role</Modal.Title>

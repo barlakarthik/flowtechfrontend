@@ -31,7 +31,6 @@ const Reviewer = () => {
   const [{ isLoading, apiData, serverError }] = useFetch(`/email/${email}`);
 
   const ViewerModal = (rowdata) => {
-    console.log(rowdata, "row")
     setSelectedRowData([rowdata]);
     setShowViewer(!showViwer)
   }
@@ -48,33 +47,33 @@ const Reviewer = () => {
         const filteredData = enquiriesRes.data.filter((item) => item.export === true);
         console.log(filteredData, "filter");
         setShowData(filteredData);
-  
+
         axios.get(`http://localhost:8080/api/getusers`)
           .then((usersRes) => {
             const usersData = usersRes.data;
-  
+
             // Filter customers who have ordered something
             const customersWithOrders = usersData.filter((customer) =>
               filteredData.find((enquiry) => enquiry.enqRefNum === customer._id)
             );
-  
+
             console.log(customersWithOrders, "filter");
             setCustomer(customersWithOrders);
           });
       });
   }
-  
+
 
   const orderView = () => {
     setViewOrder(!viewOrder)
   }
 
   const handleAccept = (id, index) => {
-    console.log(id,index,"suspect")
+    console.log(id, index, "suspect")
     const updatedAcceptRows = [...accept];
-    console.log(updatedAcceptRows,"suspect")
+    console.log(updatedAcceptRows, "suspect")
     updatedAcceptRows[index] = !updatedAcceptRows[index];
-    console.log( updatedAcceptRows[index],"suspect")
+    console.log(updatedAcceptRows[index], "suspect")
     setAccept(updatedAcceptRows);
     const acceptValue = updatedAcceptRows[index] ? true : false;
     axios
@@ -87,15 +86,15 @@ const Reviewer = () => {
       });
   };
 
-  const handleReject = async (data,index) => {
+  const handleReject = async (data, index) => {
     console.log(data.enqSource, "data")
     setReject(data.enqSource)
     const res = await axios.post('http://localhost:8080/api/rejectmail', { body: (reject) });
     if (res.data.info && res.data.status === 201) {
       console.log(res, "ress")
       toast.success("mail send successfully")
-      const updatedRejectValue=[...accept]
-      updatedRejectValue[index]=updatedRejectValue[index]
+      const updatedRejectValue = [...accept]
+      updatedRejectValue[index] = updatedRejectValue[index]
       setAccept(updatedRejectValue);
     } else {
       toast.error("unable send mail")
@@ -139,18 +138,18 @@ const Reviewer = () => {
         <nav class='nav' style={{ backgroundColor: "rgb(48, 117, 184)" }}>
           <>
             <div>
-            <Link to="/profile">
-              <img
-                src={apiData?.profile}
-                style={{
-                  width: "70px",
-                  height: "70px",
-                  borderRadius: "50px",
-                  cursor: "pointer",
-                }}
-                alt="Profile"
-              />
-            </Link>
+              <Link to="/profile">
+                <img
+                  src={apiData?.profile}
+                  style={{
+                    width: "70px",
+                    height: "70px",
+                    borderRadius: "50px",
+                    cursor: "pointer",
+                  }}
+                  alt="Profile"
+                />
+              </Link>
             </div>
             <div>
               <li className="nav-item">
