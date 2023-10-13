@@ -41,30 +41,40 @@ const Reviewer = () => {
   }
 
   const ReviewData = (accountName) => {
-    setIsOpen(!isOpen)
+    setIsOpen(!isOpen);
     setSelectedAccountName(accountName);
     axios.get(`http://localhost:8080/api/enquiries`)
-      .then((res) => {
-        console.log(res.data, "filter")
-        const filteredData = res.data.filter((item) => item.export === true);
-        setShowData(filteredData)
+      .then((enquiriesRes) => {
+        const filteredData = enquiriesRes.data.filter((item) => item.export === true);
+        console.log(filteredData, "filter");
+        setShowData(filteredData);
+  
         axios.get(`http://localhost:8080/api/getusers`)
-          .then((res) => {
-            const usersData = res.data
-            const customers = usersData.filter((cus) => cus.role === "customer")
-            setCustomer(customers)
-          })
-
-      })
+          .then((usersRes) => {
+            const usersData = usersRes.data;
+  
+            // Filter customers who have ordered something
+            const customersWithOrders = usersData.filter((customer) =>
+              filteredData.find((enquiry) => enquiry.enqRefNum === customer._id)
+            );
+  
+            console.log(customersWithOrders, "filter");
+            setCustomer(customersWithOrders);
+          });
+      });
   }
+  
 
   const orderView = () => {
     setViewOrder(!viewOrder)
   }
 
   const handleAccept = (id, index) => {
+    console.log(id,index,"suspect")
     const updatedAcceptRows = [...accept];
+    console.log(updatedAcceptRows,"suspect")
     updatedAcceptRows[index] = !updatedAcceptRows[index];
+    console.log( updatedAcceptRows[index],"suspect")
     setAccept(updatedAcceptRows);
     const acceptValue = updatedAcceptRows[index] ? true : false;
     axios
@@ -77,13 +87,16 @@ const Reviewer = () => {
       });
   };
 
-  const handleReject = async (data) => {
+  const handleReject = async (data,index) => {
     console.log(data.enqSource, "data")
     setReject(data.enqSource)
     const res = await axios.post('http://localhost:8080/api/rejectmail', { body: (reject) });
     if (res.data.info && res.data.status === 201) {
       console.log(res, "ress")
       toast.success("mail send successfully")
+      const updatedRejectValue=[...accept]
+      updatedRejectValue[index]=updatedRejectValue[index]
+      setAccept(updatedRejectValue);
     } else {
       toast.error("unable send mail")
     }
@@ -126,6 +139,7 @@ const Reviewer = () => {
         <nav class='nav' style={{ backgroundColor: "rgb(48, 117, 184)" }}>
           <>
             <div>
+            <Link to="/profile">
               <img
                 src={apiData?.profile}
                 style={{
@@ -136,6 +150,7 @@ const Reviewer = () => {
                 }}
                 alt="Profile"
               />
+            </Link>
             </div>
             <div>
               <li className="nav-item">
