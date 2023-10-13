@@ -36,7 +36,6 @@ const Password = () => {
           navigate("/admin")
         }
         else if(logeduser.role === "reviewer"){
-          console.log(logeduser.role, "logeduser.role")
           navigate("/reviewer")
         }
          else if (logeduser.role === "approver") {

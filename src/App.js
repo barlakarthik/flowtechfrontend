@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Email from './components/Email';
 import Password from './components/Password';
 import Register from './components/Register';
+import Approve from './components/Approve';
 import Profile from './components/Profile';
 import Recovery from './components/Recovery';
 import Reset from './components/Reset';
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path:'/reviewer',
     element:<Reviewer/>
+  },
+  {
+    path:'/approver',
+    element:<Approve/>
   },
   {
     path:'/password',

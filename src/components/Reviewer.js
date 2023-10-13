@@ -4,8 +4,6 @@ import toast, { Toaster } from 'react-hot-toast';
 import { store } from "../App";
 import { CFormCheck } from "@coreui/react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrashAlt, faIdCardAlt, faCartPlus, faEye, faFileExport, faChampagneGlasses } from '@fortawesome/free-solid-svg-icons';
 import { Modal, ModalBody } from 'react-bootstrap';
 import { Collapse, CardBody, Card, Button, CardHeader } from 'reactstrap'
 import axios from 'axios';
@@ -72,7 +70,6 @@ const Reviewer = () => {
     axios
       .put(`http://localhost:8080/api/enquiry/${id}`, { accept: acceptValue })
       .then((res) => {
-        console.log(res, "rss")
         toast.success('your Products accepted successfully');
       })
       .catch((error) => {

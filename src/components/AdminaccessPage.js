@@ -106,7 +106,11 @@ useEffect(()=>{
     axios
       .put(`http://localhost:8080/api/enquiry/${id}`, { export: exportValue })
       .then(() => {
-        toast.success('exported successfully');
+        if(exportValue === true){
+          toast.success('exported successfully');
+        }else{
+          toast.error('you undo your export');
+        }
       })
       .catch((error) => {
         console.error('Error exporting enquiry:', error);

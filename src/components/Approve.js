@@ -82,8 +82,9 @@ const Approve = () => {
     }
     const getApprovedEnquiries = async () => {
         setShowUsers(false);
-        const approvedEnq = await axios(`http://localhost:8080/api/enquiries`)
-        setApproved(approvedEnq.data)
+        const approvedEnq = await axios(`http://localhost:8080/api/enquiries`);
+        const trueEnq = approvedEnq.data.filter((io) => io.accept === true);
+        setApproved(trueEnq)
         setShow(!show);
     }
     return (
