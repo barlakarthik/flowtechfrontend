@@ -7,7 +7,7 @@ import { getAllUsers } from "../helper/helper";
 import { deleteUser } from '../helper/helper';
 import { updateUser } from "../helper/helper";
 import toast, { Toaster } from 'react-hot-toast';
-import { faEye, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { store } from "../App";
 import axios from 'axios';
@@ -17,13 +17,23 @@ const Approve = () => {
     const [users, setUsers] = useState([]);
     const [show, setShow] = useState(false);
     const [products, setProducts] = useState([]);
-    const [showProducts, setShowProducts] = useState(false);
     const [showModal, setShowModal] = useState(false)
     const [showUsers, setShowUsers] = useState(false)
     const [blur, setBlur] = useState("");
     const [disabledIcon, setDisableIcon] = useState({});
     const [toggleCard, setToggleCard] = useState(false);
-    const [customerProducts, setCustomerProducts] = useState([])
+    const [modeOfShow, setModeOfShow] = useState(false);
+    const [customerProducts, setCustomerProducts] = useState([]);
+    const [viewtype, setViewType] = useState("");
+    const [enqObj, setEnqObj] = useState({
+        name: "",
+        description: "",
+        category: "",
+        price: null,
+        countInStock: null,
+        imageUrl: ""
+    });
+    const [addProducts, setAddProducts] = useState(false);
     if (!email) {
         const localemail = localStorage.getItem('email');
         setEmail(localemail)
@@ -46,11 +56,19 @@ const Approve = () => {
         },
     });
     const LogoutHandler = () => {
-        // setShowUsers(!showUsers);
         localStorage.clear()
     }
+    const toggleModeOfShow = () => {
+        setShowUsers(false);
+        setModeOfShow(true);
+        setAddProducts(false);
+        setShow(false);
+        getProducts();
+    }
     const usersData = async () => {
-        setShow(false)
+        setShow(false);
+        setViewType("");
+        setAddProducts(false);
         setShowUsers(!showUsers)
         const allData = await getAllUsers()
         const filteredUsers = allData.filter((item) => (item.email !== apiData.email))
@@ -59,8 +77,6 @@ const Approve = () => {
     const getProducts = async () => {
         const productsData = await axios.get("http://localhost:8080/api/products");
         setProducts(productsData.data)
-        setShowProducts(true);
-        setShowUsers(false);
     }
     const DeleteHandler = async (id) => {
         if (id) {
@@ -71,15 +87,47 @@ const Approve = () => {
             setUsers(filteredUsers)
         }
     }
+    const onChnagehHandler = (e) => {
+        const { name, value } = e.target;
+        setEnqObj({ ...enqObj, [name]: value })
+    }
+    const Submit = async () => {
+        const obj = {
+            name: enqObj.name,
+            description: enqObj.description,
+            category: enqObj.category,
+            price: Number(enqObj.price),
+            countInStock: Number(enqObj.countInStock),
+            imageUrl: enqObj.imageUrl
+        }
+        const res = await axios.post(`http://localhost:8080/api/product`, obj);
+        if (res.status === 201 && res.data.result) {
+            toast.success("Product added successfully")
+        } else {
+            toast.error("Unable to Product")
+        }
+        setEnqObj({
+            name: "",
+            description: "",
+            category: "",
+            price: null,
+            countInStock: null,
+            imageUrl: ""
+        })
+    }
     const AssignRole = (user) => {
         setShowModal(!showModal);
     }
     const handleCloseModal = () => {
         setShowModal(false);
         setToggleCard(false);
-        setShowProducts(false);
+        setModeOfShow(false);
     }
-    const sendmail = async (e, testEmail) => {
+    const HandleViewType = (e) => {
+        const { value } = e.target;
+        setViewType(value);
+    }
+    const sendmail = async (e, testEmail, id) => {
         e.preventDefault();
         const res = await axios.post('http://localhost:8080/api/sentmail', { body: JSON.stringify({ testEmail }) });
         if (res.data.info && res.data.status === 201) {
@@ -87,7 +135,11 @@ const Approve = () => {
             setDisableIcon(prev => ({
                 ...prev, [testEmail]: true
             }))
-            setBlur(testEmail)
+            setBlur(testEmail);
+            setTimeout(async () => {
+                const remainingMails = await axios.delete(`http://localhost:8080/api/enquiry/${id}`);
+                setApproved(remainingMails);
+            }, 10000)
         } else {
             toast.error("unable send mail");
             setDisableIcon(prev => ({
@@ -101,13 +153,27 @@ const Approve = () => {
         setCustomerProducts(item.products);
     }
     useEffect(() => {
-    }, [disabledIcon])
+    }, [disabledIcon]);
+    const DeleteProduct = async (id) => {
+        const remaingProducts = await axios.delete(`http://localhost:8080/api/product/${id}`);
+        setProducts(remaingProducts);
+        toast.success("product removed successfully")
+        getProducts();
+    }
     const getApprovedEnquiries = async () => {
         setShowUsers(false);
+        setViewType("");
+        setAddProducts(false);
         const approvedEnq = await axios(`http://localhost:8080/api/enquiries`);
         const trueEnq = approvedEnq.data.filter((io) => io.accept === true);
         setApproved(trueEnq)
         setShow(!show);
+    }
+    const AddProducts = () => {
+        setShowUsers(false);
+        setViewType("");
+        setShow(false);
+        setAddProducts(true);
     }
     return (
         <div>
@@ -133,7 +199,7 @@ const Approve = () => {
                             <a
                                 className="nav-link text-light"
                                 style={{ textDecoration: "none", cursor: "pointer" }}
-                            // onClick={() => usersData()}
+                                onClick={AddProducts}
                             >
                                 AddProducts
                             </a>
@@ -166,7 +232,7 @@ const Approve = () => {
                             <a
                                 className="nav-link text-light"
                                 style={{ textDecoration: "none", cursor: "pointer" }}
-                                onClick={getProducts}
+                                onClick={toggleModeOfShow}
                             >
                                 Products<span style={{ backgroundColor: "yellow", color: "red", padding: "3px", borderRadius: "50px" }}>{products.length}</span>
                             </a>
@@ -196,7 +262,6 @@ const Approve = () => {
                                                         cursor: "pointer",
                                                     }}
                                                 />
-                                                {/* <span className={`${user.role ==="user"?"badge badge-sm bg-success float-end mt-1 me-2 py-2 p-1":"badge badge-sm bg-primary float-end mt-1 me-2 py-2 p-1"}`} style={{color:"white"}}>{user.role}</span> */}
                                                 {user.role === "reviewer" ? <span style={{ color: "red" }}><b>{user.role}</b></span> : <span style={{ color: "blue" }}><b>{user.role}</b></span>}
                                             </div>
                                             <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -225,6 +290,81 @@ const Approve = () => {
                     </div>
                 )
             }
+            {viewtype === "grid" && (
+                <div className='row mt-2 mx-2'>
+                    {products && products.length >= 1 && products.map((item) => {
+                        return (
+                            <div className='col-3'>
+                                <div className='card mb-2'>
+                                    <div className='card-body'>
+                                        <div className='row' style={{ display: "flex", justifyContent: "space-between" }}>
+                                            <div className='col-6'>
+                                                {item.name}
+                                            </div>
+                                            <div className='col-2'>
+                                                <img src={item.imageUrl} alt='pic'
+                                                    style={{
+                                                        width: "50px",
+                                                        height: "50px",
+                                                        borderRadius: "50px",
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className='row'>
+                                                <div className='col-4'>
+                                                    {item.category === "groceries" && <span style={{ color: "green" }}><b>{item.category}</b></span> || item.category === "deo" && <span style={{ color: "red" }}><b>{item.category}</b></span> || item.category === "mobiles" && <span style={{ color: "blue" }}><b>{item.category}</b></span> || item.category === "footwear" && <span style={{ color: "black" }}><b>{item.category}</b></span> || item.category === "electronics" && <span style={{ color: "yellow" }}><b>{item.category}</b></span>}
+                                                </div>
+                                                <div className='col-2'>
+                                                    ₹{item.price}
+                                                </div>
+                                                <div className='col-4'>
+                                                    <span style={{ color: "orange" }}><b>Stock</b></span>{item.countInStock}
+                                                </div>
+                                                <div className='col-2'>
+                                                    <FontAwesomeIcon icon={faTrash} style={{ color: "red" }} onClick={() => DeleteProduct(item._id)} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
+            {
+                viewtype === "list" && (
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>S.no</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>countInStock</th>
+                                <th>Image</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {products && products.length >= 1 && products.map((item, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{item.name}</td>
+                                        <td>{item.category}</td>
+                                        <td>{item.price}</td>
+                                        <td>{item.countInStock}</td>
+                                        <td><img src={item.imageUrl} style={{ width: "25px", height: "25px", borderRadius: "50px", }} /></td>
+                                        <td>
+                                            <FontAwesomeIcon icon={faTrash} style={{ color: "red" }} onClick={() => DeleteProduct(item._id)} />
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                )}
             {
                 show && approved.length > 0 &&
                 <div className='d-flex justify-content-center'>
@@ -242,7 +382,7 @@ const Approve = () => {
                                     </div>
                                 </div>
                                 <div className="col">
-                                    <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "30px", cursor: "pointer" }} disabled={disabledIcon[item.enqSource] === true} onClick={(e) => sendmail(e, item.enqSource)} />{" "}
+                                    <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: "30px", cursor: "pointer" }} disabled={disabledIcon[item.enqSource] === true} onClick={(e) => sendmail(e, item.enqSource, item._id)} />{" "}
                                     <FontAwesomeIcon icon={faEye} style={{ color: "dodgerblue", fontSize: "30px", cursor: "pointer" }} onClick={(e) => CustomerProducts(e, item)} />
                                 </div>
                             </form>
@@ -251,33 +391,52 @@ const Approve = () => {
                     </div>
                 )
             })}
-            <Modal show={showProducts} onHide={handleCloseModal} size='xl'>
+            {addProducts && (
+                <div class="card mx-auto w-50 mt-5">
+                    <div class="card-body">
+                        <span style={{ display: "flex", justifyContent: "center", color: "dodgerblue", flexWrap: "wrap", fontSize: "25px" }}>Product Information</span>
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" placeholder="name..." name='name' value={enqObj.name} onChange={onChnagehHandler} />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <input type="text" class="form-control" placeholder="description..." name='description' value={enqObj.description} onChange={onChnagehHandler} />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <input type="text" class="form-control" placeholder="category..." name='category' value={enqObj.category} onChange={onChnagehHandler} />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price</label>
+                            <input type="text" class="form-control" placeholder="price..." name='price' value={enqObj.price} onChange={onChnagehHandler} />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Count In Stock</label>
+                            <input type="text" class="form-control" placeholder="countInStock..." name='countInStock' value={enqObj.countInStock} onChange={onChnagehHandler} />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image</label>
+                            <input type="text" class="form-control" placeholder="imageUrl..." name='imageUrl' value={enqObj.imageUrl} onChange={onChnagehHandler} />
+                        </div>
+                        <button className='btn btn-outline-primary float-end' onClick={Submit}>Submit</button>
+                    </div>
+                </div>
+            )}
+            <Modal show={modeOfShow} onHide={handleCloseModal} size='sm'>
                 <Modal.Header closeButton>
-                    <Modal.Title>Products</Modal.Title>
+                    <Modal.Title>select mode of show</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className='row'>
-                        {products && products.length >= 1 && products.map((item) => {
-                            return (
-                                <div className='col-3'>
-                                    <div className='card'>
-                                        <div className='card-body'>
-                                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                                {item.name}
-                                                <img src={item.imageUrl} alt='pic'
-                                                    style={{
-                                                        width: "50px",
-                                                        height: "50px",
-                                                        borderRadius: "50px",
-                                                    }}
-                                                />
-                                                {item.category === "groceries"&&<span style={{ color: "green" }}><b>{item.category}</b></span>||item.category === "deo"&&<span style={{ color: "red" }}><b>{item.category}</b></span>||item.category === "mobiles"&&<span style={{ color: "blue" }}><b>{item.category}</b></span>||item.category === "footwear"&&<span style={{ color: "black" }}><b>{item.category}</b></span>||item.category === "electronics"&&<span style={{ color: "yellow" }}><b>{item.category}</b></span>}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )
-                        })}
+                    <div className='row' style={{ display: "flex", justifyContent: "space-between" }}>
+                        <div className='col-2'>
+                            <label class="form-label">Grid</label>{" "}
+                            <input type="radio" name='viewtype' value="grid" checked={viewtype === "grid"} onChange={HandleViewType} />
+                        </div>
+                        <div className='col-2'>
+                            <label class="form-label">List</label>{" "}
+                            <input type="radio" name='viewtype' value="list" checked={viewtype === "list"} onChange={HandleViewType} />
+                        </div>
                     </div>
                 </Modal.Body>
             </Modal>
