@@ -1,0 +1,18 @@
+.sidebar {
+    width: 15%;
+    background-color: rgb(45, 51, 84);
+    height: 100vh;
+    transition: width 2s;
+  }
+  
+  .sidebar.open {
+    width: 15%;
+  }
+  
+  .sidebar.closed {
+    width: 0;
+  }
+  
+  .main-content {
+    flex: 1;
+  }
